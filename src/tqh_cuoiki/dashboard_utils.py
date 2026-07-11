@@ -63,7 +63,6 @@ def sparkline_svg(values, color="#0B1849", grad_id="sparkline") -> str:
     series = pd.Series(values, dtype="float64").dropna()
     if len(series) < 2:
         return '<div style="height:30px"></div>'
-    # Downsample long daily series while preserving the full selected period.
     if len(series) > 60:
         positions = np.linspace(0, len(series) - 1, 60).astype(int)
         series = series.iloc[positions]

@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from dashboard_utils import FUEL_META, adjustment_rows, progress_svg, sparkline_svg, style_figure
+from tqh_cuoiki.dashboard_utils import FUEL_META, adjustment_rows, progress_svg, sparkline_svg, style_figure
 
 
 COLORS = {"Xăng RON 95": "#0B1849", "Xăng E5 RON 92": "#4B5694", "Dầu Diesel": "#7288AE"}
@@ -17,7 +17,6 @@ def _kpi_card(title, value, note, visual):
 
 
 def render(df, selected_fuels, selected_year, df_full):
-    # Header giữ đúng cấu trúc template ban đầu.
     st.markdown(
         """<div style="display:flex;align-items:center;justify-content:space-between;
         border-bottom:2px solid var(--line);padding-bottom:12px;margin-bottom:20px;width:100%;">
@@ -33,7 +32,6 @@ def render(df, selected_fuels, selected_year, df_full):
         st.warning("Không có dữ liệu phù hợp với bộ lọc hiện tại.")
         return
 
-    # Bộ lọc nhiên liệu ở sidebar quyết định nội dung; tránh lặp thêm bộ chọn trong trang.
     primary_fuel = selected_fuels[0]
     prefix, unit = FUEL_META[primary_fuel]
     base_col = f"{prefix}_base_price"
@@ -44,7 +42,6 @@ def render(df, selected_fuels, selected_year, df_full):
     events = adjustment_rows(data, [prefix])
     latest = data.iloc[-1]
 
-    # HÀNG KPI: luôn đúng 5 thẻ như template ban đầu.
     k1, k2, k3, k4, k5 = st.columns(5)
     expected_days = (data.date.max() - data.date.min()).days + 1
     coverage = len(data) / expected_days * 100
@@ -65,7 +62,6 @@ def render(df, selected_fuels, selected_year, df_full):
 
     bog_events = events[events[contrib_col].ne(0) | events[spend_col].ne(0)].copy()
 
-    # HÀNG 1: Cấu thành giá và lịch sử can thiệp.
     row1_left, row1_right = st.columns([4, 6])
     with row1_left:
         st.markdown(f"<div class='section-header'>TÁC ĐỘNG CỦA QUỸ BOG ĐẾN GIÁ BÁN LẺ ({primary_fuel})</div>", unsafe_allow_html=True)
@@ -127,7 +123,6 @@ def render(df, selected_fuels, selected_year, df_full):
             style_figure(fig)
             st.plotly_chart(fig, width="stretch")
 
-    # HÀNG 2: Hiệu quả giảm biến động và số kỳ can thiệp.
     row2_left, row2_right = st.columns(2)
     with row2_left:
         st.markdown("<div class='section-header'>MỨC GIẢM THAY ĐỔI GIÁ</div>", unsafe_allow_html=True)
@@ -170,7 +165,6 @@ def render(df, selected_fuels, selected_year, df_full):
         style_figure(fig)
         st.plotly_chart(fig, width="stretch")
 
-    # HÀNG 3: Bối cảnh tần suất toàn kỳ và so sánh chi tiết có/không BOG.
     row3_left, row3_right = st.columns(2)
     with row3_left:
         st.markdown("<div class='section-header'>TẦN SUẤT ĐIỀU CHỈNH GIÁ QUA CÁC NĂM</div>", unsafe_allow_html=True)

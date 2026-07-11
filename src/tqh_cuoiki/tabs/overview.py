@@ -3,7 +3,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from dashboard_utils import FUEL_META, adjustment_rows, period_change, progress_svg, sparkline_svg, style_figure
+from tqh_cuoiki.dashboard_utils import FUEL_META, adjustment_rows, period_change, progress_svg, sparkline_svg, style_figure
 
 
 COLORS = {"Xăng RON 95": "#0B1849", "Xăng E5 RON 92": "#4B5694", "Dầu Diesel": "#7288AE"}
