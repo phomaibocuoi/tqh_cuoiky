@@ -688,6 +688,18 @@ def render(df, selected_fuels, selected_year, df_full):
                 )
             )
 
+            years = sorted(
+                rank_data["Năm"].unique()
+            )
+
+            year_positions = {
+                year: index
+                for index, year in enumerate(years)
+            }
+
+            # Dịch riêng năm cuối sang phải
+            year_positions[years[-1]] += 1.5
+
             fig = go.Figure()
 
             for fuel in selected_fuels:
@@ -698,9 +710,25 @@ def render(df, selected_fuels, selected_year, df_full):
                     .sort_values("Năm")
                 )
 
+                x_positions = [
+                    year_positions[year]
+                    for year in fuel_rank["Năm"]
+                ]
+
+                custom_data = [
+                    [
+                        year,
+                        price,
+                    ]
+                    for year, price in zip(
+                        fuel_rank["Năm"],
+                        fuel_rank["Giá trung bình"],
+                    )
+                ]
+
                 fig.add_trace(
                     go.Scatter(
-                        x=fuel_rank["Năm"],
+                        x=x_positions,
                         y=fuel_rank["Thứ hạng"],
                         mode="lines+markers+text",
                         name=fuel,
@@ -713,7 +741,9 @@ def render(df, selected_fuels, selected_year, df_full):
                         ),
                         text=[
                             f"{price:,.0f}"
-                            for price in fuel_rank["Giá trung bình"]
+                            for price in fuel_rank[
+                                "Giá trung bình"
+                            ]
                         ],
                         textposition="top center",
                         textfont=dict(
@@ -721,14 +751,13 @@ def render(df, selected_fuels, selected_year, df_full):
                             color=COLORS[fuel],
                         ),
                         cliponaxis=False,
-                        customdata=fuel_rank[
-                            "Giá trung bình"
-                        ],
+                        customdata=custom_data,
                         hovertemplate=(
                             f"{fuel}<br>"
-                            "Năm %{x}<br>"
+                            "Năm %{customdata[0]}<br>"
                             "Thứ hạng: %{y:.0f}<br>"
-                            "Giá trung bình: %{customdata:,.0f} đ/lít"
+                            "Giá trung bình: "
+                            "%{customdata[1]:,.0f} đ/lít"
                             "<extra></extra>"
                         ),
                     )
@@ -740,7 +769,19 @@ def render(df, selected_fuels, selected_year, df_full):
                 paper_bgcolor="white",
                 xaxis=dict(
                     title=None,
-                    type="category",
+                    tickmode="array",
+                    tickvals=[
+                        year_positions[year]
+                        for year in years
+                    ],
+                    ticktext=[
+                        str(year)
+                        for year in years
+                    ],
+                    range=[
+                        -0.45,
+                        year_positions[years[-1]] + 0.45,
+                    ],
                     showgrid=False,
                 ),
                 yaxis=dict(
@@ -763,7 +804,7 @@ def render(df, selected_fuels, selected_year, df_full):
                 ),
                 margin=dict(
                     l=55,
-                    r=20,
+                    r=35,
                     t=48,
                     b=35,
                 ),
@@ -777,7 +818,7 @@ def render(df, selected_fuels, selected_year, df_full):
                 config={
                     "displayModeBar": False
                 },
-            )
+            ) 
     # =========================================================
     # BIỂU ĐỒ 5
     # =========================================================
