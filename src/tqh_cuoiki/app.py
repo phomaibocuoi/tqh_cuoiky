@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from tqh_cuoiki.tabs import overview, price_management, global_pressure
+from tqh_cuoiki.tabs import global_pressure, industrial_fuel, overview, price_management
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -284,6 +284,13 @@ def run_app() -> None:
     ):
         st.session_state.page = "Sức ép toàn cầu"
         st.rerun()
+    if st.sidebar.button(
+        "Nhiên liệu công nghiệp",
+        width="stretch",
+        type="primary" if st.session_state.page == "Nhiên liệu công nghiệp" else "secondary",
+    ):
+        st.session_state.page = "Nhiên liệu công nghiệp"
+        st.rerun()
     st.sidebar.markdown("<hr style='border-top: 1px solid #1E293B; margin: 15px 0;'>", unsafe_allow_html=True)
     st.sidebar.markdown("<p style='font-weight: 700; color: #64748B; margin-bottom: 8px; font-size: 11px; letter-spacing: 0.5px;'>BỘ LỌC HIỂN THỊ</p>", unsafe_allow_html=True)
 
@@ -311,16 +318,21 @@ def run_app() -> None:
         overview.render(filtered_df, selected_fuels)
     elif st.session_state.page == "Cơ chế điều hành":
         price_management.render(
-        filtered_df,
-        selected_fuels,
-        selected_year,
-        df,
-    )
+            filtered_df,
+            selected_fuels,
+            selected_year,
+            df,
+        )
     elif st.session_state.page == "Sức ép toàn cầu":
         global_pressure.render(
-        filtered_df,
-        selected_fuels,
-        selected_year,
-        df,
-    )
-    
+            filtered_df,
+            selected_fuels,
+            selected_year,
+            df,
+        )
+    elif st.session_state.page == "Nhiên liệu công nghiệp":
+        industrial_fuel.render(
+            filtered_df,
+            selected_year,
+            df,
+        )

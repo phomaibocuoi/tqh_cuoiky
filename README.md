@@ -1,9 +1,11 @@
 # Dashboard Giá Xăng Dầu Việt Nam
 
-Dashboard Streamlit phân tích dữ liệu giá xăng dầu Việt Nam theo thời gian, gồm 2 màn hình chính:
+Dashboard Streamlit phân tích dữ liệu giá xăng dầu Việt Nam theo thời gian, gồm 4 màn hình chính:
 
 - Tổng quan thị trường
 - Cơ chế điều hành và điều tiết giá
+- Sức ép thị trường toàn cầu
+- Nhiên liệu công nghiệp Mazut
 
 ## Cấu trúc dự án
 
@@ -21,7 +23,9 @@ Dashboard Streamlit phân tích dữ liệu giá xăng dầu Việt Nam theo th�
 │       ├── dashboard_utils.py
 │       └── tabs/
 │           ├── overview.py
-│           └── price_management.py
+│           ├── price_management.py
+│           ├── global_pressure.py
+│           └── industrial_fuel.py
 └── .streamlit/
     └── config.toml
 ```
