@@ -76,15 +76,28 @@ def render(df, selected_fuels, selected_year, df_full):
             base, contribution = row[base_col], row[contrib_col]
             spending, retail = row[spend_col], row[retail_col]
             net_effect = contribution - spending
-            fig = go.Figure(go.Bar(
-                x=["Mức trích BOG", "Mức chi BOG"],
-                y=[contribution, spending],
-                marker_color=["#4B5694", "#C1B49A"],
-                text=[f"+{contribution:,.0f}" if contribution else "0",
-                      f"{spending:,.0f}" if spending else "0"],
+            
+            # Dynamic Y-axis zoom to make small BOG changes clearly visible
+            y_min = min(base, retail) - 1000
+            y_max = max(base, retail) + 1000
+            
+            fig = go.Figure(go.Waterfall(
+                name=primary_fuel,
+                orientation="v",
+                measure=["relative", "relative", "relative", "total"],
+                x=["Giá cơ sở (A)", "Trích lập BOG (B)", "Chi sử dụng BOG (C)", "Giá bán lẻ"],
                 textposition="outside",
-                hovertemplate="%{x}: %{y:,.0f} " + unit + "<extra></extra>",
+                text=[f"{base:,.0f} đ", 
+                      f"+{contribution:,.0f} đ" if contribution > 0 else "0 đ", 
+                      f"-{spending:,.0f} đ" if spending > 0 else "0 đ", 
+                      f"{retail:,.0f} đ"],
+                y=[base, contribution, -spending, retail],
+                connector=dict(line=dict(color="#7288AE", width=1, dash="dot")),
+                decreasing=dict(marker=dict(color="#7288AE")),
+                increasing=dict(marker=dict(color="#4B5694")),
+                totals=dict(marker=dict(color="#0B1849"))
             ))
+            
             effect_text = (f"BOG làm giá tăng: <b>{net_effect:,.0f} {unit}</b>" if net_effect >= 0
                            else f"BOG hỗ trợ giảm giá: <b>{abs(net_effect):,.0f} {unit}</b>")
             fig.add_annotation(
@@ -94,7 +107,7 @@ def render(df, selected_fuels, selected_year, df_full):
             )
             fig.update_layout(
                 height=230, plot_bgcolor="white", paper_bgcolor="white",
-                xaxis=dict(title=None), yaxis=dict(title=f"Mức BOG ({unit})", rangemode="tozero", showgrid=False),
+                xaxis=dict(title=None), yaxis=dict(title=f"Giá ({unit})", range=[y_min, y_max], showgrid=False),
                 showlegend=False, margin=dict(l=48, r=20, t=38, b=35),
             )
             style_figure(fig, show_legend=False)
@@ -174,10 +187,11 @@ def render(df, selected_fuels, selected_year, df_full):
         colors = ["#0B1849" if selected_year == "Tất cả các năm" or y == selected_year else "#7288AE" for y in annual.Năm]
         fig = go.Figure(go.Bar(x=annual.Năm, y=annual["Số kỳ"], marker_color=colors,
                                text=annual["Số kỳ"], textposition="outside"))
+        max_kỳ = annual["Số kỳ"].max() if not annual.empty else 60
         fig.update_layout(
             height=240, plot_bgcolor="white", paper_bgcolor="white", yaxis_title="Số kỳ",
             xaxis=dict(type="category", range=[-0.55, len(annual) - 0.45], automargin=True),
-            yaxis=dict(rangemode="tozero"), margin=dict(l=48, r=32, t=35, b=42),
+            yaxis=dict(rangemode="tozero", range=[0, max_kỳ * 1.15]), margin=dict(l=48, r=32, t=35, b=42),
         )
         style_figure(fig, show_legend=False)
         st.plotly_chart(fig, width="stretch")
