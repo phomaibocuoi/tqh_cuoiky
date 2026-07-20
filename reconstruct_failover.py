@@ -1,4 +1,6 @@
 import os
+
+code = """import os
 import google.generativeai as genai
 from pydantic import BaseModel
 import re
@@ -12,12 +14,12 @@ def get_ai_code(request: AIGenerateRequest, api_key: str) -> str:
     genai.configure(api_key=api_key)
     
     system_prompt = (
-        "Bạn là trợ lý phân tích dữ liệu Pandas chuyên nghiệp.\n"
-        "Tôi sẽ cung cấp cho bạn câu hỏi của người dùng và thông tin về dữ liệu (schema).\n"
-        "Yêu cầu xử lý:\n"
-        "1. NẾU người dùng yêu cầu phân tích dữ liệu, tính toán, hoặc vẽ biểu đồ: Hãy viết mã Python (chỉ dùng pandas và plotly). Biến dataframe gốc là `df`. LƯU biểu đồ vào biến `fig`, kết quả bảng vào biến `result_df`. CODE BẮT BUỘC ĐẶT TRONG KHỐI ```python ... ``` và có comment tiếng Việt giải thích.\n"
-        "LƯU Ý QUAN TRỌNG VỀ THIẾT KẾ BIỂU ĐỒ: BẮT BUỘC ưu tiên sử dụng Bảng màu chủ đạo (Theme Palette) sau đây cho tất cả các biểu đồ: '#0B1849' (Xanh than), '#C1B49A' (Vàng kim), '#94A3B8' (Xám nhạt). Tùy chỉnh màu đường (line), cột (bar) hoặc màu các thành phần (trace) sao cho bám sát bộ màu này để đồng nhất với giao diện. Đồng thời MỌI BIỂU ĐỒ BẮT BUỘC phải có Tiêu đề (title) mô tả rõ ràng, nhãn trục x, trục y và chú thích (legend) đầy đủ.\n"
-        "2. NẾU người dùng hỏi lý thuyết, cần gợi ý ý tưởng, hoặc hỏi ngoài lề: Hãy trả lời bằng văn bản bình thường (KHÔNG bọc trong khối code).\n"
+        "Bạn là trợ lý phân tích dữ liệu Pandas chuyên nghiệp.\\n"
+        "Tôi sẽ cung cấp cho bạn câu hỏi của người dùng và thông tin về dữ liệu (schema).\\n"
+        "Yêu cầu xử lý:\\n"
+        "1. NẾU người dùng yêu cầu phân tích dữ liệu, tính toán, hoặc vẽ biểu đồ: Hãy viết mã Python (chỉ dùng pandas và plotly). Biến dataframe gốc là `df`. LƯU biểu đồ vào biến `fig`, kết quả bảng vào biến `result_df`. CODE BẮT BUỘC ĐẶT TRONG KHỐI ```python ... ``` và có comment tiếng Việt giải thích.\\n"
+        "LƯU Ý QUAN TRỌNG VỀ THIẾT KẾ BIỂU ĐỒ: BẮT BUỘC ưu tiên sử dụng Bảng màu chủ đạo (Theme Palette) sau đây cho tất cả các biểu đồ: '#0B1849' (Xanh than), '#C1B49A' (Vàng kim), '#94A3B8' (Xám nhạt). Tùy chỉnh màu đường (line), cột (bar) hoặc màu các thành phần (trace) sao cho bám sát bộ màu này để đồng nhất với giao diện. Đồng thời MỌI BIỂU ĐỒ BẮT BUỘC phải có Tiêu đề (title) mô tả rõ ràng, nhãn trục x, trục y và chú thích (legend) đầy đủ.\\n"
+        "2. NẾU người dùng hỏi lý thuyết, cần gợi ý ý tưởng, hoặc hỏi ngoài lề: Hãy trả lời bằng văn bản bình thường (KHÔNG bọc trong khối code).\\n"
     )
     
     prompt_lower = request.prompt.strip().lower()
@@ -100,7 +102,7 @@ fig.update_layout(height=320, title="Diễn biến số dư Quỹ BOG của Petr
         if m not in sorted_models and "2.5-flash" not in m:
             sorted_models.append(m)
 
-    user_message = f"Schema của dữ liệu `df`:\n{request.schema_info}\n\nYêu cầu phân tích: {request.prompt}"
+    user_message = f"Schema của dữ liệu `df`:\\n{request.schema_info}\\n\\nYêu cầu phân tích: {request.prompt}"
     
     last_error = None
     for model_name in sorted_models:
@@ -109,11 +111,11 @@ fig.update_layout(height=320, title="Diễn biến số dư Quỹ BOG của Petr
             response = model.generate_content([system_prompt, user_message])
             text = response.text
             # Kiểm tra xem có khối code python không
-            match = re.search(r"```python\n(.*?)\n```", text, re.DOTALL)
+            match = re.search(r"```python\\n(.*?)\\n```", text, re.DOTALL)
             if match:
                 return {"type": "code", "content": match.group(1).strip()}
             
-            match_any = re.search(r"```\n(.*?)\n```", text, re.DOTALL)
+            match_any = re.search(r"```\\n(.*?)\\n```", text, re.DOTALL)
             if match_any:
                 return {"type": "code", "content": match_any.group(1).strip()}
                 
@@ -164,10 +166,10 @@ def get_ai_insight(request: AIGenerateRequest, api_key: str) -> dict:
         "Bạn là chuyên gia phân tích dữ liệu. "
         "Người dùng đã đặt một câu hỏi và hệ thống vừa chạy xong mã Python để vẽ biểu đồ hoặc trích xuất số liệu. "
         "Dưới đây là BẢNG THỐNG KÊ KẾT QUẢ TỪ BIỂU ĐỒ (đã tính sẵn khoảng thời gian, đỉnh cao nhất, đáy thấp nhất của từng chuỗi dữ liệu). "
-        "Nhiệm vụ của bạn: Hãy viết một đoạn nhận xét/phân tích thật sắc bén (khoảng 4-5 câu) để TRẢ LỜI TRỰC TIẾP câu hỏi ban đầu của người dùng.\n\n"
+        "Nhiệm vụ của bạn: Hãy viết một đoạn nhận xét/phân tích thật sắc bén (khoảng 4-5 câu) để TRẢ LỜI TRỰC TIẾP câu hỏi ban đầu của người dùng.\\n\\n"
         "LƯU Ý QUAN TRỌNG: BẮT BUỘC phải đề cập rõ ràng điểm/thời gian cao nhất, thấp nhất dựa trên thống kê được cung cấp. Phân tích nguyên nhân (nếu biết) và đưa ra góc nhìn tổng quan. Không giải thích chung chung."
     )
-    user_message = f"Câu hỏi của tôi: {request.prompt}\n\nDữ liệu kết quả từ hệ thống:\n{request.schema_info}"
+    user_message = f"Câu hỏi của tôi: {request.prompt}\\n\\nDữ liệu kết quả từ hệ thống:\\n{request.schema_info}"
     
     last_error = None
     for model_name in sorted_models:
@@ -175,7 +177,7 @@ def get_ai_insight(request: AIGenerateRequest, api_key: str) -> dict:
             model = genai.GenerativeModel(model_name.replace("models/", ""))
             response = model.generate_content(
                 contents=[
-                    {"role": "user", "parts": [{"text": system_prompt + "\n\n" + user_message}]}
+                    {"role": "user", "parts": [{"text": system_prompt + "\\n\\n" + user_message}]}
                 ]
             )
             return {"insight": response.text.strip()}
@@ -184,3 +186,7 @@ def get_ai_insight(request: AIGenerateRequest, api_key: str) -> dict:
             continue
             
     return {"insight": f"Không thể tạo nhận xét tự động lúc này do tất cả API model đều quá tải. Chi tiết lỗi cuối: {str(last_error)}"}
+"""
+
+with open(r"d:\HCMUS\tqh\finalterm\tqh_cuoiky\api\ai_service.py", "w", encoding="utf-8") as f:
+    f.write(code)
