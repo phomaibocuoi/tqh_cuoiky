@@ -21,7 +21,7 @@ class ExecuteRequest(BaseModel):
 
 @app.post("/api/ai/generate")
 async def generate_code(request: AIGenerateRequest):
-    api_key = os.getenv("GEMINI_API_KEY", "")
+    api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         raise HTTPException(status_code=500, detail="Chưa cài đặt biến môi trường API key.")
     try:
@@ -32,7 +32,7 @@ async def generate_code(request: AIGenerateRequest):
 
 @app.post("/api/insight")
 async def generate_insight(request: AIGenerateRequest):
-    api_key = os.getenv("GEMINI_API_KEY", "")
+    api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         raise HTTPException(status_code=500, detail="Chưa cài đặt biến môi trường API key.")
     try:

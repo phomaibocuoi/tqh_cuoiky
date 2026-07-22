@@ -24,11 +24,77 @@ def render(df: pd.DataFrame):
         .suggestion-card:hover { border-color: var(--brand); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .editor-container { border: 1px solid var(--line); border-radius: 8px; padding: 15px; background: #fafafa; margin-top:10px; }
         div[data-testid="stTextArea"] textarea { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important; font-size: 14px !important; line-height: 1.5 !important; background-color: #f6f8fa !important; border: 1px solid #d0d7de !important;}
+        div[data-testid="stChatInput"] { border: 2px solid #0B1849 !important; border-radius: 10px !important; box-shadow: 0 4px 14px rgba(11,24,73,0.15) !important; padding: 2px; }
         </style>
     """, unsafe_allow_html=True)
     
-    st.markdown("<h2 class='hero-title'>Xin chào, tôi là TRỢ LÝ AI</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='hero-subtitle'>Nhập yêu cầu phân tích dữ liệu và AI sẽ tự động sinh mã nguồn để xử lý.</p>", unsafe_allow_html=True)
+    st.markdown(
+    """<div style="display:flex;align-items:center;justify-content:space-between;
+    border-bottom:2px solid var(--line);padding-bottom:12px;margin-bottom:20px;width:100%;">
+    <div style="font-size:30px;font-weight:800;color:var(--brand);letter-spacing:-0.8px;line-height:1.1;">
+    Xin chào, tôi là 
+    <span style="font-weight:800;">
+    TRỢ LÝ AI
+    </span>
+    <div style="font-size:14px;color:var(--muted);margin-top:8px;font-weight:normal;">
+    Nhập yêu cầu phân tích dữ liệu và AI sẽ tự động sinh mã nguồn để xử lý.
+    </div>
+    </div>
+    <span style="background:var(--brand);color:#fff;font-size:10px;font-weight:800;
+    padding:4px 10px;border-radius:999px;letter-spacing:.5px;text-transform:uppercase;">
+    AI Assistant
+    </span>
+    </div>""",
+    unsafe_allow_html=True,
+    )
+    
+    with st.expander("Lịch sử sử dụng"):
+        try:
+            logs_res = requests.get(f"{API_BASE_URL}/api/logs")
+            if logs_res.status_code == 200:
+                logs = logs_res.json()
+                if logs:
+                    log_options = { f"{log['timestamp'][:16].replace('T', ' ')} | {str(log['user_prompt'])[:60]}...": log for log in logs }
+                    selected_log_label = st.selectbox("Danh sách các câu hỏi: ", ["-- Chọn --"] + list(log_options.keys()))
+                    
+                    if selected_log_label != "-- Chọn --":
+                        selected_log = log_options[selected_log_label]
+                        st.markdown(f"**Yêu cầu:** {selected_log['user_prompt']}")
+                        
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.markdown("**Code AI sinh ra:**")
+                            st.code(selected_log["ai_generated_code"], language="python")
+                        with col2:
+                            st.markdown("**Code thực thi cuối cùng:**")
+                            st.code(selected_log["final_edited_code"], language="python")
+                            
+                        if st.button("Tái tạo biểu đồ từ mã nguồn này", type="primary"):
+                            with st.spinner("Đang chạy lại mã nguồn..."):
+                                exec_payload = {
+                                    "code": selected_log["final_edited_code"],
+                                    "user_prompt": selected_log["user_prompt"],
+                                    "ai_code": selected_log["ai_generated_code"]
+                                }
+                                res = requests.post(f"{API_BASE_URL}/api/execute", json=exec_payload)
+                                if res.status_code == 200:
+                                    result_data = res.json()
+                                    if result_data.get("status") != "error":
+                                        if result_data.get("has_fig") and result_data.get("fig_json"):
+                                            fig = pio.from_json(result_data.get("fig_json"))
+                                            st.plotly_chart(fig, use_container_width=True)
+                                        if result_data.get("has_df") and result_data.get("df_json"):
+                                            res_df = pd.read_json(io.StringIO(result_data.get("df_json")), orient="records")
+                                            st.dataframe(res_df)
+                                    else:
+                                        st.error("Lỗi khi chạy code:")
+                                        st.code(result_data.get("traceback"))
+                                else:
+                                    st.error("Không thể kết nối đến API.")
+                else:
+                    st.info("Chưa có lịch sử hỏi đáp nào.")
+        except Exception as e:
+            st.error(f"Lỗi tải lịch sử: {e}")
         
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
@@ -179,6 +245,9 @@ def render(df: pd.DataFrame):
                                     except Exception as e:
                                         print("Lỗi khi lấy nhận xét:", e)
                             
+                            # Cập nhật lại đoạn code trong lịch sử thành code đã chỉnh sửa
+                            st.session_state.chat_history[-1]["content"] = edited_code
+                            
                             st.session_state.chat_history.append({
                                 "role": "assistant",
                                 "type": "result",
@@ -192,29 +261,29 @@ def render(df: pd.DataFrame):
             st.markdown("</div>", unsafe_allow_html=True)
             
     st.markdown("---")
-    st.markdown("**💡 Câu hỏi gợi ý nhanh (Dành cho thành viên nhóm):**")
+    st.markdown("**Câu hỏi gợi ý nhanh:**")
     
-    q1 = "Sức ép từ thị trường toàn cầu (giá dầu Brent và tỷ giá USD/VND) lên giá bán lẻ của các nhóm nhiên liệu tại Việt Nam?"
+    q1 = "Vẽ biểu đồ so sánh giá bán lẻ Xăng RON 95, E5 RON 92 và Dầu Diesel để phân tích tác động của sức ép toàn cầu."
     if st.button(f"1. (23120122) {q1}", use_container_width=True):
         st.session_state.pending_suggestion = q1
         st.rerun()
 
-    q2 = "Quỹ BOG đã can thiệp vào giá Mazut như thế nào?"
+    q2 = "Vẽ biểu đồ kết hợp thể hiện giá bán lẻ và mức trích Quỹ BOG của dầu Mazut để đánh giá can thiệp điều tiết."
     if st.button(f"2. (23120151) {q2}", use_container_width=True):
         st.session_state.pending_suggestion = q2
         st.rerun()
 
-    q3 = "Cơ chế điều hành giá xăng dầu và Quỹ Bình ổn giá (BOG) tại Việt Nam?"
+    q3 = "Vẽ biểu đồ so sánh Giá bán lẻ và Giá cơ sở của xăng RON 95 để đánh giá cơ chế điều hành giá."
     if st.button(f"3. (23120152) {q3}", use_container_width=True):
         st.session_state.pending_suggestion = q3
         st.rerun()
 
-    q4 = "Nhà nước đã làm thế nào để xăng sinh học E5 luôn rẻ hơn xăng RON95, nhằm khuyến khích người dân chọn năng lượng xanh từ năm 2018-2026?"
+    q4 = "So sánh giá Xăng RON 95 và Xăng E5 RON 92 để thấy rõ chính sách ưu đãi giá cho năng lượng xanh."
     if st.button(f"4. (23120172) {q4}", use_container_width=True):
         st.session_state.pending_suggestion = q4
         st.rerun()
 
-    q5 = "Quỹ bình ổn giá xăng dầu được vận hành như thế nào giữa hai doanh nghiệp Petrolimex và PVOil trong giai đoạn 2018–2026?"
+    q5 = "So sánh diễn biến số dư Quỹ BOG của Petrolimex và PVOil để phân tích sự đồng pha trong trích lập và chi sử dụng quỹ."
     if st.button(f"5. (23120176) {q5}", use_container_width=True):
         st.session_state.pending_suggestion = q5
         st.rerun()

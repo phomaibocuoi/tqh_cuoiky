@@ -22,7 +22,7 @@ def get_ai_code(request: AIGenerateRequest, api_key: str) -> str:
     
     prompt_lower = request.prompt.strip().lower()
     
-    if "sức ép từ thị trường toàn cầu" in prompt_lower:
+    if "tác động của sức ép toàn cầu" in prompt_lower:
         hardcoded_code = '''import plotly.graph_objects as go
 # Biểu đồ diễn biến giá xăng dầu chịu tác động toàn cầu
 COLORS = {"Xăng RON 95": "#0B1849", "Xăng E5 RON 92": "#4B5694", "Dầu Diesel": "#7288AE"}
@@ -34,7 +34,7 @@ fig.update_layout(height=320, title="Tác động của sức ép toàn cầu l�
 '''
         return {"type": "code", "content": hardcoded_code}
         
-    if "giá mazut" in prompt_lower:
+    if "quỹ bog của dầu mazut" in prompt_lower:
         hardcoded_code = '''import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 # Biểu đồ giá Mazut và BOG
@@ -47,7 +47,7 @@ fig.update_yaxes(title_text="Trích BOG (đ/kg)", secondary_y=True)
 '''
         return {"type": "code", "content": hardcoded_code}
         
-    if "cơ chế điều hành giá xăng dầu và quỹ bình ổn giá (bog)" in prompt_lower:
+    if "cơ chế điều hành giá" in prompt_lower:
         hardcoded_code = '''import plotly.graph_objects as go
 fig = go.Figure()
 fig.add_trace(go.Scatter(x=df['date'], y=df['ron95_retail_price'], name='Giá bán lẻ', line=dict(color='#0B1849', width=2)))
@@ -56,7 +56,7 @@ fig.update_layout(height=320, title="Cơ chế điều hành giá RON 95 (Giá b
 '''
         return {"type": "code", "content": hardcoded_code}
 
-    if "nhà nước đã làm thế nào để xăng sinh học e5 luôn rẻ hơn xăng ron95" in prompt_lower:
+    if "ưu đãi giá cho năng lượng xanh" in prompt_lower:
         hardcoded_code = '''import plotly.graph_objects as go
 fig = go.Figure()
 fig.add_trace(go.Scatter(x=df["date"], y=df["ron95_retail_price"], name="Xăng RON 95", line=dict(color="#0B1849", width=2)))
@@ -65,7 +65,7 @@ fig.update_layout(height=320, title="So sánh giá xăng RON 95 và xăng sinh h
 '''
         return {"type": "code", "content": hardcoded_code}
         
-    if "quỹ bình ổn giá xăng dầu được vận hành như thế nào giữa hai doanh nghiệp" in prompt_lower:
+    if "sự đồng pha" in prompt_lower:
         hardcoded_code = '''import plotly.graph_objects as go
 import pandas as pd
 COLORS = {"Petrolimex": "#0B1849", "PVOil": "#C1B49A"}
@@ -128,15 +128,15 @@ fig.update_layout(height=320, title="Diễn biến số dư Quỹ BOG của Petr
 
 def get_ai_insight(request: AIGenerateRequest, api_key: str) -> dict:
     prompt_lower = request.prompt.strip().lower()
-    if "sức ép từ thị trường toàn cầu" in prompt_lower:
+    if "tác động của sức ép toàn cầu" in prompt_lower:
         return {"insight": "Sức ép từ giá dầu thế giới (Brent) và tỷ giá hối đoái USD/VND đã định hình đường cong giá xăng dầu trong nước rất mạnh. Mọi cú sốc từ thị trường quốc tế đều được phản ánh vào cấu trúc giá bán lẻ, đòi hỏi cơ quan điều hành phải linh hoạt để giảm thiểu tác động tiêu cực đến lạm phát."}
-    if "giá mazut" in prompt_lower:
+    if "quỹ bog của dầu mazut" in prompt_lower:
         return {"insight": "Khác với xăng dầu giao thông, Mazut là nhiên liệu công nghiệp nặng nên cấu trúc giá phụ thuộc vào nhu cầu sản xuất và vận tải biển toàn cầu. Quỹ BOG thường can thiệp linh hoạt vào Mazut để tránh gây sốc chi phí sản xuất cho các ngành công nghiệp mũi nhọn."}
-    if "cơ chế điều hành giá xăng dầu và quỹ bình ổn giá (bog)" in prompt_lower:
+    if "cơ chế điều hành giá" in prompt_lower:
         return {"insight": "Quỹ Bình ổn giá đóng vai trò là 'tấm nệm' giảm xóc. Khi giá thế giới tăng mạnh, quỹ được chi ra để hãm đà tăng; khi giá giảm, quỹ được trích lập lại. Cơ chế này vận hành khá hiệu quả giúp các loại nhiên liệu biến động mềm mại hơn so với nhịp tăng giảm của thế giới."}
-    if "nhà nước đã làm thế nào để xăng sinh học e5 luôn rẻ hơn xăng ron95" in prompt_lower:
+    if "ưu đãi giá cho năng lượng xanh" in prompt_lower:
         return {"insight": "Đường đồ thị cho thấy xăng sinh học E5 luôn duy trì mức giá rẻ hơn RON 95 (dao động khoảng 1.000 - 1.500 đồng/lít). Điều này là nhờ chính sách thuế bảo vệ môi trường thấp hơn và ưu tiên chi quỹ BOG mạnh hơn cho E5, nhằm thúc đẩy thói quen sử dụng năng lượng xanh."}
-    if "quỹ bình ổn giá xăng dầu được vận hành như thế nào giữa hai doanh nghiệp" in prompt_lower:
+    if "sự đồng pha" in prompt_lower:
         return {"insight": "Petrolimex chiếm thị phần áp đảo nên số dư quỹ BOG của họ luôn có biên độ biến động rất lớn so với PVOil. Tuy nhiên, đồ thị số dư quỹ của cả hai doanh nghiệp đều dao động cùng chiều, phản ánh tính thống nhất trong các quyết định trích lập/chi sử dụng quỹ từ Liên Bộ."}
 
     genai.configure(api_key=api_key)
