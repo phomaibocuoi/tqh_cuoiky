@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from tqh_cuoiki.tabs import bog_fund, global_pressure, industrial_fuel, overview, price_management
+from tqh_cuoiki.tabs import bog_fund, global_pressure, industrial_fuel, overview, price_management, ai_assistant
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -299,6 +299,15 @@ def run_app() -> None:
         st.session_state.page = "Quỹ bình ổn giá"
         st.rerun()
     st.sidebar.markdown("<hr style='border-top: 1px solid #1E293B; margin: 15px 0;'>", unsafe_allow_html=True)
+    
+    if st.sidebar.button(
+        "Trợ lý AI",
+        width="stretch",
+        type="primary" if st.session_state.page == "Trợ lý AI" else "secondary",
+    ):
+        st.session_state.page = "Trợ lý AI"
+        st.rerun()
+    st.sidebar.markdown("<hr style='border-top: 1px solid #1E293B; margin: 15px 0;'>", unsafe_allow_html=True)
     st.sidebar.markdown("<p style='font-weight: 700; color: #64748B; margin-bottom: 8px; font-size: 11px; letter-spacing: 0.5px;'>BỘ LỌC HIỂN THỊ</p>", unsafe_allow_html=True)
 
     years_list = ["Tất cả các năm"] + sorted(list(df["date"].dt.year.unique().astype(str)))
@@ -349,3 +358,5 @@ def run_app() -> None:
             selected_year,
             df,
         )
+    elif st.session_state.page == "Trợ lý AI":
+        ai_assistant.render(df)
