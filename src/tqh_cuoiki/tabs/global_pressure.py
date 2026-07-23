@@ -440,7 +440,7 @@ def render(df, selected_fuels, selected_year, df_full):
 
     st.plotly_chart(
         fig,
-        width="stretch",
+        use_container_width=True,
         config={
             "displayModeBar": False
         },
@@ -545,7 +545,7 @@ def render(df, selected_fuels, selected_year, df_full):
 
             st.plotly_chart(
                 fig,
-                width="stretch",
+                use_container_width=True,
                 config={
                     "displayModeBar": False
                 },
@@ -646,7 +646,7 @@ def render(df, selected_fuels, selected_year, df_full):
 
             st.plotly_chart(
                 fig,
-                width="stretch",
+                use_container_width=True,
                 config={
                     "displayModeBar": False
                 },
@@ -814,7 +814,7 @@ def render(df, selected_fuels, selected_year, df_full):
 
             st.plotly_chart(
                 fig,
-                width="stretch",
+                use_container_width=True,
                 config={
                     "displayModeBar": False
                 },
@@ -1005,7 +1005,7 @@ def render(df, selected_fuels, selected_year, df_full):
 
             st.plotly_chart(
                 fig,
-                width="stretch",
+                use_container_width=True,
                 config={
                     "displayModeBar": False
                 },
@@ -1028,6 +1028,6 @@ def render(df, selected_fuels, selected_year, df_full):
 
         st.dataframe(
             data[columns],
-            width="stretch",
+            use_container_width=True,
             hide_index=True,
         )

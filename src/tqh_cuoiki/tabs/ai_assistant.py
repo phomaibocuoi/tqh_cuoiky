@@ -5,7 +5,9 @@ import json
 import plotly.io as pio
 import io
 
-API_BASE_URL = "http://localhost:8000"
+import os
+
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 
 def get_schema_info(df: pd.DataFrame) -> str:
     schema = []

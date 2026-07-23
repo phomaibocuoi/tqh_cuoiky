@@ -159,7 +159,7 @@ def render(df: pd.DataFrame, selected_year: str, df_full: pd.DataFrame):
             margin=dict(l=48, r=20, t=20, b=35),
         )
         style_figure(fig, show_legend=False)
-        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     with row1_right:
         st.markdown("<div class='section-header'>DIỄN BIẾN SỐ DƯ QUỸ THEO THỜI GIAN</div>", unsafe_allow_html=True)
@@ -197,7 +197,7 @@ def render(df: pd.DataFrame, selected_year: str, df_full: pd.DataFrame):
             margin=dict(l=58, r=28, t=48, b=42),
         )
         style_figure(fig)
-        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     row2_left, row2_right = st.columns(2)
 
@@ -248,7 +248,7 @@ def render(df: pd.DataFrame, selected_year: str, df_full: pd.DataFrame):
             margin=dict(l=45, r=15, t=42, b=45),
         )
         style_figure(fig)
-        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     with row2_right:
         st.markdown("<div class='section-header'>CHI QUỸ BOG VÀ ĐỘ DÀI CHU KỲ GIỮ GIÁ</div>", unsafe_allow_html=True)
@@ -295,8 +295,8 @@ def render(df: pd.DataFrame, selected_year: str, df_full: pd.DataFrame):
                 margin=dict(l=48, r=20, t=38, b=42),
             )
             style_figure(fig)
-            st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     with st.expander("Xem dữ liệu quỹ BOG theo bộ lọc"):
         cols = ["date", "is_adjustment_day", petro_col, pvoil_col] + FUEL_SPENDING_COLS
-        st.dataframe(data[cols], width="stretch", hide_index=True)
+        st.dataframe(data[cols], use_container_width=True, hide_index=True)

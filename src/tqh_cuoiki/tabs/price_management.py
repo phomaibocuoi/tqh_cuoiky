@@ -111,7 +111,7 @@ def render(df, selected_fuels, selected_year, df_full):
                 showlegend=False, margin=dict(l=48, r=20, t=38, b=35),
             )
             style_figure(fig, show_legend=False)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
     with row1_right:
         st.markdown(f"<div class='section-header'>LỊCH SỬ TRÍCH LẬP VÀ CHI SỬ DỤNG BOG ({primary_fuel})</div>", unsafe_allow_html=True)
@@ -134,7 +134,7 @@ def render(df, selected_fuels, selected_year, df_full):
                 margin=dict(l=58, r=28, t=48, b=42),
             )
             style_figure(fig)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
     row2_left, row2_right = st.columns(2)
     with row2_left:
@@ -156,7 +156,7 @@ def render(df, selected_fuels, selected_year, df_full):
         fig.update_layout(height=240, plot_bgcolor="white", paper_bgcolor="white",
                           xaxis=dict(title="Mức giảm thay đổi (%)", range=[min_x, max_x]))
         style_figure(fig, show_legend=False, keep_zero_line=True)
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, use_container_width=True)
 
     with row2_right:
         st.markdown("<div class='section-header'>SỐ KỲ TRÍCH LẬP VÀ CHI SỬ DỤNG BOG</div>", unsafe_allow_html=True)
@@ -176,7 +176,7 @@ def render(df, selected_fuels, selected_year, df_full):
                           legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
                           bargap=0.28, bargroupgap=0.08, margin=dict(l=45, r=15, t=42, b=45))
         style_figure(fig)
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, use_container_width=True)
 
     row3_left, row3_right = st.columns(2)
     with row3_left:
@@ -194,7 +194,7 @@ def render(df, selected_fuels, selected_year, df_full):
             yaxis=dict(rangemode="tozero", range=[0, max_kỳ * 1.15]), margin=dict(l=48, r=32, t=35, b=42),
         )
         style_figure(fig, show_legend=False)
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, use_container_width=True)
 
     with row3_right:
         st.markdown(f"<div class='section-header'>GIÁ BÁN LẺ VÀ GIÁ CƠ SỞ GHI NHẬN ({primary_fuel})</div>", unsafe_allow_html=True)
@@ -214,7 +214,7 @@ def render(df, selected_fuels, selected_year, df_full):
                           yaxis=dict(title=unit, showgrid=False, zeroline=False),
                           margin=dict(l=50, r=25, t=42, b=35))
         style_figure(fig)
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, use_container_width=True)
 
     with st.expander("Xem dữ liệu điều hành theo bộ lọc"):
         columns = ["date", "is_adjustment_day"]

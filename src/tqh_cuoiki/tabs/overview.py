@@ -53,7 +53,7 @@ def render(df, selected_fuels):
     fig.update_layout(height=270, hovermode="x unified", plot_bgcolor="white", paper_bgcolor="white",
                       yaxis_title="đ/lít", xaxis_title=None, legend=dict(orientation="h"))
     style_figure(fig)
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig, use_container_width=True)
 
     left, right = st.columns([1, 2.15])
     with left:
@@ -67,7 +67,7 @@ def render(df, selected_fuels):
         box.update_layout(height=235, showlegend=False, plot_bgcolor="white", paper_bgcolor="white",
                           xaxis_title=None, yaxis_title="đ/lít")
         style_figure(box, show_legend=False)
-        st.plotly_chart(box, width="stretch")
+        st.plotly_chart(box, use_container_width=True)
 
     with right:
         group_by_year = data["date"].dt.year.nunique() > 1
@@ -116,7 +116,7 @@ def render(df, selected_fuels):
             margin=dict(l=55, r=20, t=42, b=35),
         )
         style_figure(bars)
-        st.plotly_chart(bars, width="stretch", config={"displayModeBar": False})
+        st.plotly_chart(bars, use_container_width=True, config={"displayModeBar": False})
 
     macro_col, relation_col = st.columns([3, 2])
     with macro_col:
@@ -130,7 +130,7 @@ def render(df, selected_fuels):
                             yaxis2=dict(title="VND/USD", overlaying="y", side="right"),
                             legend=dict(orientation="h", y=1.12), margin=dict(t=35, b=30))
         style_figure(macro)
-        st.plotly_chart(macro, width="stretch", config={"displayModeBar": False})
+        st.plotly_chart(macro, use_container_width=True, config={"displayModeBar": False})
 
     with relation_col:
         st.markdown("<div class='section-header'>MỐI LIÊN HỆ GIỮA BRENT VÀ GIÁ BÁN LẺ</div>", unsafe_allow_html=True)
@@ -160,8 +160,8 @@ def render(df, selected_fuels):
             legend=dict(orientation="h", y=1.2), margin=dict(t=48, b=40, l=48, r=15),
         )
         style_figure(relation)
-        st.plotly_chart(relation, width="stretch", config={"displayModeBar": False})
+        st.plotly_chart(relation, use_container_width=True, config={"displayModeBar": False})
 
     with st.expander("Xem dữ liệu theo bộ lọc"):
         columns = ["date", "usd_vnd", "brent_usd_per_barrel"] + [f"{p}_retail_price" for p in prefixes]
-        st.dataframe(data[columns], width="stretch", hide_index=True)
+        st.dataframe(data[columns], use_container_width=True, hide_index=True)

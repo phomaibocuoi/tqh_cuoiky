@@ -129,7 +129,7 @@ def render(df, selected_year, df_full):
             margin=dict(l=52, r=55, t=48, b=35),
         )
         style_figure(fig)
-        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     with row1_right:
         st.markdown("<div class='section-header'>CƠ CẤU CAN THIỆP BOG THEO NĂM</div>", unsafe_allow_html=True)
@@ -162,7 +162,7 @@ def render(df, selected_year, df_full):
                 margin=dict(l=45, r=20, t=48, b=45),
             )
             style_figure(fig)
-            st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     row2_left, row2_right = st.columns([2, 3])
     with row2_left:
@@ -192,7 +192,7 @@ def render(df, selected_year, df_full):
                 margin=dict(l=45, r=55, t=48, b=45),
             )
             style_figure(fig)
-            st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     with row2_right:
         st.markdown("<div class='section-header'>10 KỲ ĐIỀU CHỈNH MAZUT MẠNH NHẤT</div>", unsafe_allow_html=True)
@@ -228,7 +228,7 @@ def render(df, selected_year, df_full):
                 margin=dict(l=75, r=35, t=35, b=45),
             )
             style_figure(fig, show_legend=False, keep_zero_line=True)
-            st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     st.markdown("<div class='section-header'>MAZUT SO VỚI TRUNG BÌNH NHÓM NHIÊN LIỆU GIAO THÔNG</div>", unsafe_allow_html=True)
     fig = go.Figure()
@@ -283,7 +283,7 @@ def render(df, selected_year, df_full):
         margin=dict(l=52, r=58, t=48, b=35),
     )
     style_figure(fig, keep_zero_line=True)
-    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
     with st.expander("Xem dữ liệu mazut theo bộ lọc"):
         table = data[
@@ -309,4 +309,4 @@ def render(df, selected_year, df_full):
                 "mazut_base_retail_gap": "Chênh bán lẻ - cơ sở",
             }
         )
-        st.dataframe(table, width="stretch", hide_index=True)
+        st.dataframe(table, use_container_width=True, hide_index=True)
