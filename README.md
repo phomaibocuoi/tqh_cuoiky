@@ -19,8 +19,6 @@ Bên cạnh đó, ứng dụng tích hợp **Trợ lý AI** giúp người dùng
 │   ├── ai_service.py
 │   └── execution_service.py
 ├── app.py
-├── reconstruct.py
-├── reconstruct_failover.py
 ├── data/
 │   └── vn_fuel_price_2018_present.csv
 ├── notebooks/
